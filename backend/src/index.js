@@ -28,6 +28,16 @@ app.get('/api/cats', (req, res) => {
   });
 });
 
+app.get('/api/channels', (req, res) => {
+  res.json({
+    channels: [
+      { id: 1, name: 'General Meowing'},
+      { id: 2, name: 'Kibble Reviews'},
+      {id: 3, name: 'Catnip Classifeds'}
+    ]
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
