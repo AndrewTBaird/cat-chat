@@ -15,7 +15,7 @@ export const ChatInput = () => {
       </InputGroupAddon>
       <InputGroupAddon align="inline-end">
         <InputGroupButton>
-          <SendHorizonal /> 
+          <SendHorizonal/> 
         </InputGroupButton>
       </InputGroupAddon>
     </InputGroup>

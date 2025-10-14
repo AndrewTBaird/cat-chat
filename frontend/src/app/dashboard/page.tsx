@@ -1,19 +1,12 @@
 'use client';
 
-import { AppSidebar } from "@/components/app-sidebar";
 import { ChatInput } from "@/components/chat-input";
-
-import { SidebarProvider } from "@/components/ui/sidebar";
-
 
 const Page = () => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
+    <div className="flex flex-1 flex-col">
       <ChatInput />
-    </SidebarProvider>
-    
-
+    </div>
   )
 }
 
