@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/auth.js';
+import { authenticateToken } from './middleware/auth.js';
 
 // Load environment variables
 dotenv.config();
@@ -15,18 +18,13 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
-// Routes
-app.get('/', (req, res) => {
-  res.json({ message: 'Cat Chat API is running!' });
-});
+// Authentication routes
+app.use('/api/auth', authRoutes);
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Example API endpoint
-app.get('/api/cats', (req, res) => {
+//Auth-Protected Routes
+app.get('/api/cats', authenticateToken, (req, res) => {
   res.json({
     cats: [
       { id: 1, name: 'Whiskers', breed: 'Tabby' },
@@ -34,6 +32,11 @@ app.get('/api/cats', (req, res) => {
       { id: 3, name: 'Oliver', breed: 'Persian' }
     ]
   });
+});
+
+// Unauthenticated routes
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.get('/api/channels', (req, res) => {
