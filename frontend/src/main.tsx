@@ -5,7 +5,8 @@ import App from './App.tsx'
 import HomePage from './app/page.tsx'
 import DashboardPage from './app/dashboard/page.tsx'
 import './index.css'
-import Login from './app/login/page.tsx'
+import Login from './app/authenticate/login/page.tsx'
+import Authenticate from './app/authenticate/page.tsx'
 
 const router = createBrowserRouter([
   {
@@ -23,8 +24,17 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/login',
-    element: <Login />
+    path: '/authenticate',
+    element: <Authenticate />,
+    children: [
+      {
+        path: 'login',
+        element: <Login />,
+      },
+      {
+        path: 'register',
+      }
+    ]
   },
 ])
 
