@@ -43,7 +43,13 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      // Try to parse error message from response body
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `API request failed: ${response.statusText}`);
+      } catch (parseError) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
     }
 
     return response.json();
@@ -52,6 +58,29 @@ class ApiClient {
 
 // Export a singleton instance
 export const api = new ApiClient();
+
+// Auth types
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface AuthResponse {
+  message: string;
+  user: User;
+}
+
+// Auth functions
+export const register = (data: RegisterRequest) =>
+  api.post<AuthResponse>('/api/auth/register', data);
 
 // Example usage functions
 export const getCats = () => api.get<{ cats: Array<{ id: number; name: string; breed: string }> }>('/api/cats');
