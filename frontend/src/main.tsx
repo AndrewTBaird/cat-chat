@@ -7,6 +7,7 @@ import DashboardPage from './app/dashboard/page.tsx'
 import './index.css'
 import Login from './app/authenticate/login/page.tsx'
 import Authenticate from './app/authenticate/page.tsx'
+import Register from './app/authenticate/register/page.tsx'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'register',
+        element: <Register />,
       }
     ]
   },
