@@ -1,23 +1,19 @@
 'use client';
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { ChatInput } from "@/components/chat-input";
 
-import { Sidebar, SidebarProvider } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom"
+import { SidebarProvider } from "@/components/ui/sidebar";
+
 
 const Page = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
+      <ChatInput />
     </SidebarProvider>
     
-    // <div className="flex min-h-svh flex-col items-center justify-center gap-4">
-    //   <h1 className="text-3xl font-bold">Dashboard</h1>
-    //   <p className="text-muted-foreground">Welcome to your dashboard!</p>
-    //   <Link to="/">
-    //     <Button variant="outline">Back to Home</Button>
-    //   </Link>
-    // </div>
+
   )
 }
 

@@ -1,11 +1,19 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
@@ -31,9 +39,9 @@ app.get('/api/cats', (req, res) => {
 app.get('/api/channels', (req, res) => {
   res.json({
     channels: [
-      { id: 1, name: 'General Meowing'},
-      { id: 2, name: 'Kibble Reviews'},
-      {id: 3, name: 'Catnip Classifeds'}
+      { id: 1, name: 'General Meowing' },
+      { id: 2, name: 'Kibble Reviews' },
+      { id: 3, name: 'Catnip Classifieds' }
     ]
   })
 })
