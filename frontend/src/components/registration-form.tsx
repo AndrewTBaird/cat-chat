@@ -1,4 +1,5 @@
 import { useState, FormEvent } from "react"
+import { useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +22,7 @@ export function RegistrationForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -29,7 +31,6 @@ export function RegistrationForm({
   })
   const [error, setError] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -55,9 +56,9 @@ export function RegistrationForm({
         password: formData.password,
       })
 
-      setSuccess(true)
-      // You can redirect to dashboard or home page here
       console.log("Registration successful:", response)
+      // Navigate to dashboard after successful registration
+      navigate('/dashboard')
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
@@ -74,21 +75,6 @@ export function RegistrationForm({
       ...formData,
       [e.target.id]: e.target.value,
     })
-  }
-
-  if (success) {
-    return (
-      <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">Registration Successful!</CardTitle>
-            <CardDescription>
-              Your account has been created. Welcome to Cat Chat!
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    )
   }
 
   return (
