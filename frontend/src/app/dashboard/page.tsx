@@ -31,7 +31,10 @@ const Page = () => {
   return (
     <div className="flex flex-col h-full">
       <ChatOutput messages={messages} />
-      <ChatInput onSendMessage={handleSendMessage} />
+      <div className='p-4'>
+        <ChatInput onSendMessage={handleSendMessage} />
+      </div>
+
     </div>
   )
 }
