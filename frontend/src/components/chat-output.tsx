@@ -1,36 +1,16 @@
-import { useEffect, useState } from "react";
-import { Item } from "./ui/item";
-import { useSocket } from "@/contexts/SocketContext";
+interface ChatOutputProps {
+  messages: string[]
+}
 
-export const ChatOutput = () => {
-  const [chats, setChats] = useState<Array<string>>([])
-
-  const { socket } = useSocket();
-
-
-    useEffect(() => {
-      if (!socket) return
-
-      const handleMessage = (msg: { text: string }) => {
-        console.log(msg)
-        setChats((prevChats) => [...prevChats, msg.text])
-      }
-
-      socket.on('message', handleMessage)
-
-      return () => {
-        socket.off('message', handleMessage)
-      }
-    }, [socket])
-
-
-  const printMessages = () => {
-    return chats.map((userMessage, index) => (
-      <Item key={index}>{userMessage}</Item>
-    ))
-  }
-
-
-  return <>{printMessages()}</>
+export const ChatOutput = ({ messages }: ChatOutputProps) => {
+  return (
+    <div className="flex flex-col gap-2 flex-1 overflow-y-auto p-4">
+      {messages.map((message, index) => (
+        <div key={index} className="p-3 rounded-lg bg-muted max-w-[80%]">
+          {message}
+        </div>
+      ))}
+    </div>
+  )
 }
 
