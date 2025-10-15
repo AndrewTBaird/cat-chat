@@ -8,6 +8,7 @@ import './index.css'
 import Login from './app/authenticate/login/page.tsx'
 import Authenticate from './app/authenticate/page.tsx'
 import Register from './app/authenticate/register/page.tsx'
+import { SocketProvider } from './contexts/SocketContext'
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <SocketProvider>
+      <RouterProvider router={router} />
+    </SocketProvider>
   </React.StrictMode>,
 )
