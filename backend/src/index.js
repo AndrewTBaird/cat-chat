@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import { authenticateToken } from './middleware/auth.js';
 import { Server } from 'socket.io'
 import { createServer } from 'node:http';
+import { verifyToken } from './utils/jwt.js';
 
 // Load environment variables
 dotenv.config();
@@ -29,13 +30,62 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Middleware to authenticate WebSocket connections
+io.use((socket, next) => {
+  const cookies = socket.handshake.headers.cookie;
+
+  if (!cookies) {
+    return next(new Error('Authentication required'));
+  }
+
+  // Parse cookies manually (simple cookie parser)
+  const cookieObj = {};
+  cookies.split(';').forEach(cookie => {
+    const [key, value] = cookie.trim().split('=');
+    cookieObj[key] = value;
+  });
+
+  const token = cookieObj.token;
+
+  if (!token) {
+    return next(new Error('Authentication required'));
+  }
+
+  const decoded = verifyToken(token);
+
+  if (!decoded) {
+    return next(new Error('Invalid or expired token'));
+  }
+
+  // Attach user info to socket
+  socket.user = {
+    id: decoded.id,
+    username: decoded.username,
+    email: decoded.email,
+  };
+
+  next();
+});
+
 // Websockets via socket.io
 io.on('connection', (socket) => {
-  socket.on('message', (msg) => {
-    io.emit('message', msg)
-    console.log('message', msg)
-  })
-  console.log('a user connected');
+  console.log(`User connected: ${socket.user.username} (ID: ${socket.user.id})`);
+
+  socket.on('UserMessage', (msg) => {
+    // Now you have access to socket.user.id!
+    const messageWithUser = {
+      ...msg,
+      userId: socket.user.id,
+      username: socket.user.username,
+    };
+
+    io.emit('UserMessage', messageWithUser);
+    console.log('message from', socket.user.username, ':', msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.user.username}`);
+  });
 });
 
 // Authentication routes

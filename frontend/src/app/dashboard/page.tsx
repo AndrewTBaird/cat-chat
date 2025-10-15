@@ -17,15 +17,15 @@ const Page = () => {
       setMessages((prevMessages) => [...prevMessages, msg.text])
     }
 
-    socket.on('message', handleMessage)
+    socket.on('UserMessage', handleMessage)
 
     return () => {
-      socket.off('message', handleMessage)
+      socket.off('UserMessage', handleMessage)
     }
   }, [socket])
 
   const handleSendMessage = (message: string) => {
-    socket?.emit('message', { text: message })
+    socket?.emit('UserMessage', { text: message })
   }
 
   return (
