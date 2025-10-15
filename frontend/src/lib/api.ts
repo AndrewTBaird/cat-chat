@@ -23,6 +23,10 @@ class ApiClient {
     });
 
     if (!response.ok) {
+      // Redirect to login on 401 Unauthorized
+      if (response.status === 401) {
+        window.location.href = '/authenticate/login';
+      }
       throw new Error(`API request failed: ${response.statusText}`);
     }
 
@@ -43,6 +47,11 @@ class ApiClient {
     });
 
     if (!response.ok) {
+      // Redirect to login on 401 Unauthorized
+      if (response.status === 401) {
+        window.location.href = '/authenticate/login';
+      }
+
       // Try to parse error message from response body
       try {
         const errorData = await response.json();

@@ -154,7 +154,7 @@ export function RegistrationForm({
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <a href="#">Sign in</a>
+                  Already have an account? <a href="/authenticate/login">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
