@@ -4,13 +4,22 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.js';
 import { authenticateToken } from './middleware/auth.js';
+import { Server } from 'socket.io'
+import { createServer } from 'node:http';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 8080;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const io = new Server(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    credentials: true
+  }
+});
 
 // Middleware
 app.use(cors({
@@ -20,19 +29,16 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Websockets via socket.io
+io.on('connection', (socket) => {
+  socket.on('message', (msg) => {
+    console.log(msg)
+  })
+  console.log('a user connected');
+});
+
 // Authentication routes
 app.use('/api/auth', authRoutes);
-
-//Auth-Protected Routes
-app.get('/api/cats', authenticateToken, (req, res) => {
-  res.json({
-    cats: [
-      { id: 1, name: 'Whiskers', breed: 'Tabby' },
-      { id: 2, name: 'Luna', breed: 'Siamese' },
-      { id: 3, name: 'Oliver', breed: 'Persian' }
-    ]
-  });
-});
 
 // Unauthenticated routes
 app.get('/api/health', (req, res) => {
@@ -49,6 +55,6 @@ app.get('/api/channels', authenticateToken, (req, res) => {
   })
 })
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
