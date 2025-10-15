@@ -1,25 +1,11 @@
 'use client';
 
-import { useEffect } from 'react'
 import { ChatInput } from '@/components/chat-input'
 import { useSocket } from '@/contexts/SocketContext'
+import { ChatOutput } from '@/components/chat-output';
 
 const Page = () => {
-  const { socket } = useSocket()
-
-  useEffect(() => {
-    if (!socket) return
-
-    const handleMessage = () => {
-      // Handle incoming messages here
-    }
-
-    socket.on('message', handleMessage)
-
-    return () => {
-      socket.off('message', handleMessage)
-    }
-  }, [socket])
+  const { socket } = useSocket();
 
   const handleSendMessage = (message: string) => {
     socket?.emit('message', { text: message })
@@ -28,6 +14,7 @@ const Page = () => {
   return (
     <div className="flex flex-1 flex-col justify-end">
       <ChatInput onSendMessage={handleSendMessage} />
+      <ChatOutput />
     </div>
   )
 }

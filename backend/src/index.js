@@ -32,7 +32,8 @@ app.use(cookieParser());
 // Websockets via socket.io
 io.on('connection', (socket) => {
   socket.on('message', (msg) => {
-    console.log(msg)
+    io.emit('message', msg)
+    console.log('message', msg)
   })
   console.log('a user connected');
 });
