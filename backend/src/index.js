@@ -39,7 +39,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.get('/api/channels', (req, res) => {
+app.get('/api/channels', authenticateToken, (req, res) => {
   res.json({
     channels: [
       { id: 1, name: 'General Meowing' },
