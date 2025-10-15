@@ -5,16 +5,21 @@ import { ChatInput } from '@/components/chat-input'
 import { useSocket } from '@/contexts/SocketContext'
 import { ChatOutput } from '@/components/chat-output';
 
+interface Message {
+  text: string
+  username: string
+}
+
 const Page = () => {
   const { socket } = useSocket();
-  const [messages, setMessages] = useState<string[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
 
   useEffect(() => {
     if (!socket) return
 
-    const handleMessage = (msg: { text: string }) => {
+    const handleMessage = (msg: { text: string; username: string }) => {
       console.log(msg)
-      setMessages((prevMessages) => [...prevMessages, msg.text])
+      setMessages((prevMessages) => [...prevMessages, { text: msg.text, username: msg.username }])
     }
 
     socket.on('UserMessage', handleMessage)
