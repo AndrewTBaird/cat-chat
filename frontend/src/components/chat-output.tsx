@@ -11,7 +11,7 @@ interface ChatOutputProps {
 
 export const ChatOutput = ({ messages }: ChatOutputProps) => {
   return (
-    <div className="flex flex-col gap-2 flex-1 overflow-y-auto p-4">
+    <div className="flex flex-col flex-1 overflow-y-auto">
       {messages.map((message, index) => (
         <ChatOutputItem message={message.text} username={message.username} key={index} />
       ))}

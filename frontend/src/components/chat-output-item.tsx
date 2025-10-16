@@ -1,5 +1,5 @@
-import { PawPrint } from "lucide-react"
-import { Item } from "./ui/item"
+
+import { CatIcon } from "lucide-react"
 
 interface ChatOutputItemProps {
   message: string
@@ -8,12 +8,12 @@ interface ChatOutputItemProps {
 
 export const ChatOutputItem = ({ message, username }: ChatOutputItemProps) => {
   return (
-    <Item className="p-3 rounded-lg bg-muted">
-      <Item>
-        <PawPrint/>
-      </Item>
-      
-      <span className="font-semibold">{username}:</span> {message}
-    </Item>
+    <div className="flex items-center gap-3 p-3 hover:bg-muted" >
+      <CatIcon className="w-10 h-10 flex-shrink-0" />
+      <div className="flex flex-col">
+        <div className="font-semibold">{username}</div>
+        <div>{message}</div>
+      </div>
+    </div>
   )
 }
