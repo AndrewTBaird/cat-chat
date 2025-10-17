@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
 import { authenticateToken } from './middleware/auth.js';
 import { Server } from 'socket.io'
 import { createServer } from 'node:http';
@@ -88,8 +89,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// Authentication routes
+// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Unauthenticated routes
 app.get('/api/health', (req, res) => {
