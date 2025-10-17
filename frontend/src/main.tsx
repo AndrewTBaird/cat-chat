@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App.tsx'
 import HomePage from './app/page.tsx'
 import DashboardPage from './app/dashboard/page.tsx'
+import DashboardLayout from './app/dashboard/layout.tsx'
+import ProfilePage from './app/dashboard/profile/page.tsx'
 import './index.css'
 import Login from './app/authenticate/login/page.tsx'
 import Authenticate from './app/authenticate/page.tsx'
@@ -21,7 +23,17 @@ const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <DashboardPage />,
+        element: <DashboardLayout />,
+        children: [
+          {
+            index: true,
+            element: <DashboardPage />,
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />,
+          },
+        ],
       },
     ],
   },

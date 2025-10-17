@@ -34,12 +34,11 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col flex-1">
       <ChatOutput messages={messages} />
       <div className='p-4'>
         <ChatInput onSendMessage={handleSendMessage} />
       </div>
-
     </div>
   )
 }
