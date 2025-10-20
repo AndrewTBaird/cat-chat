@@ -36,7 +36,6 @@ app.use(cookieParser());
 
 // Middleware to authenticate WebSocket connections
 io.use((socket, next) => {
-  console.log('[WEBSOCKET] New connection attempt from:', socket.handshake.address);
   const cookies = socket.handshake.headers.cookie;
 
   if (!cookies) {
@@ -50,8 +49,6 @@ io.use((socket, next) => {
     const [key, value] = cookie.trim().split('=');
     cookieObj[key] = value;
   });
-
-  console.log('[WEBSOCKET AUTH] Available cookies:', Object.keys(cookieObj));
 
   const token = cookieObj.token;
 
@@ -67,8 +64,6 @@ io.use((socket, next) => {
     return next(new Error('Invalid or expired token'));
   }
 
-  console.log('[WEBSOCKET AUTH] Successfully authenticated user:', decoded.username);
-
   // Attach user info to socket
   socket.user = {
     id: decoded.id,
@@ -81,23 +76,17 @@ io.use((socket, next) => {
 
 // Websockets via socket.io
 io.on('connection', async (socket) => {
-  console.log(`[WEBSOCKET] User connected: ${socket.user.username} (ID: ${socket.user.id})`);
+  console.log(`User connected: ${socket.user.username} (ID: ${socket.user.id})`);
 
   // Join all channel rooms on connection
   try {
-    console.log(`[CHANNELS] Fetching channels for user ${socket.user.username}...`);
     const allChannels = await db.select().from(channels);
-    console.log(`[CHANNELS] Found ${allChannels.length} channels`);
 
     allChannels.forEach(channel => {
       socket.join(`channel-${channel.id}`);
-      console.log(`[CHANNELS] User ${socket.user.username} joined channel-${channel.id} (${channel.name})`);
     });
-
-    console.log(`[CHANNELS] User ${socket.user.username} successfully joined all ${allChannels.length} channel rooms`);
   } catch (error) {
     console.error('[CHANNELS ERROR] Failed to join channels:', error);
-    console.error('[CHANNELS ERROR] Stack:', error.stack);
     socket.emit('ConnectionError', {
       error: 'Failed to join channels',
       details: error.message
@@ -109,13 +98,11 @@ io.on('connection', async (socket) => {
       const { text, channelId } = msg;
 
       if (!text || !channelId) {
-        const errorMsg = `Invalid message: missing text or channelId. Received: ${JSON.stringify(msg)}`;
-        console.error(errorMsg);
+        const errorMsg = `Invalid message: missing text or channelId`;
+        console.error(errorMsg, msg);
         socket.emit('MessageError', { error: errorMsg });
         return;
       }
-
-      console.log(`[MESSAGE RECEIVED] User: ${socket.user.username}, Channel: ${channelId}, Text: "${text}"`);
 
       const messageWithUser = {
         text,
@@ -126,31 +113,25 @@ io.on('connection', async (socket) => {
       };
 
       // Broadcast to channel room FIRST (streaming)
-      console.log(`[BROADCASTING] To channel-${channelId}:`, messageWithUser);
       io.to(`channel-${channelId}`).emit('UserMessage', messageWithUser);
 
       // Save to database
       try {
-        console.log(`[DATABASE] Saving message to DB...`);
-        const result = await db.insert(chatMessages).values({
+        await db.insert(chatMessages).values({
           userId: socket.user.id,
           channelId,
           message: text,
-        }).returning();
-        console.log(`[DATABASE] Message saved successfully:`, result);
+        });
       } catch (dbError) {
         console.error(`[DATABASE ERROR] Failed to save message:`, dbError);
-        console.error(`[DATABASE ERROR] Stack:`, dbError.stack);
-        // Emit error to client
         socket.emit('MessageError', {
           error: 'Failed to save message to database',
           details: dbError.message
         });
-        throw dbError; // Re-throw to be caught by outer catch
+        throw dbError;
       }
     } catch (error) {
-      console.error(`[FATAL ERROR] UserMessage handler failed:`, error);
-      console.error(`[FATAL ERROR] Stack:`, error.stack);
+      console.error(`[MESSAGE ERROR] UserMessage handler failed:`, error);
       socket.emit('MessageError', {
         error: 'Failed to process message',
         details: error.message

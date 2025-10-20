@@ -25,28 +25,27 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     socketInstance.on('connect', () => {
-      console.log('[SOCKET] Connected to socket server');
+      console.log('Connected to socket server');
       setIsConnected(true);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('[SOCKET] Disconnected from socket server');
+      console.log('Disconnected from socket server');
       setIsConnected(false);
     });
 
     socketInstance.on('connect_error', (error) => {
-      console.error('[SOCKET] Connection error:', error.message);
-      console.error('[SOCKET] Full error:', error);
+      console.error('Socket connection error:', error.message);
       setIsConnected(false);
     });
 
     socketInstance.on('MessageError', (error) => {
-      console.error('[MESSAGE ERROR]', error);
+      console.error('Message error:', error);
       alert(`Message failed: ${error.error}\n${error.details || ''}`);
     });
 
     socketInstance.on('ConnectionError', (error) => {
-      console.error('[CONNECTION ERROR]', error);
+      console.error('Connection error:', error);
       alert(`Connection error: ${error.error}\n${error.details || ''}`);
     });
 
