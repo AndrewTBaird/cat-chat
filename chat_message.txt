@@ -1,0 +1,28 @@
+
+# Models
+
+Chats are related to a user and a channel
+
+# ChatMessage Schema
+ChatMessage
+id
+user_id int or string dependign on id or uuid
+channel_id int
+message text
+
+singular index on channel_id and user_id
+
+For the mvp, all channels will be public, and users will belong to all channels
+
+# Channel Schema
+Channel
+id
+name text
+
+
+# Business Logic
+
+Whenever a user submits a chat, store it on the database. If needed, this can happen asynchronously. Always stream the chat message BEFORE storing it, so the user does not have to wait for the database transaction before seeing their message pop up in chat. Chats should now be scoped by channel, and on the fronted we will fetch the available channels to populate in the sidebar
+
+When a user loads/reloads a channel, we need to fetch the last 50 chats in the channel. For now, we wont implement "infinite scroll" functionality for the chat history. We'll just show the last 50
+
