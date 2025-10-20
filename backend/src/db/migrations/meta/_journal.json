@@ -15,6 +15,13 @@
       "when": 1760660412881,
       "tag": "0001_tricky_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760979366322,
+      "tag": "0002_youthful_purple_man",
+      "breakpoints": true
     }
   ]
 }

@@ -91,7 +91,18 @@ export interface AuthResponse {
 export const register = (data: RegisterRequest) =>
   api.post<AuthResponse>('/api/auth/register', data);
 
-// Example usage functions
+// Channel types
+export interface Message {
+  id: number;
+  message: string;
+  channelId: number;
+  userId: string;
+  username: string;
+  createdAt: string;
+}
+
+// API functions
 export const getCats = () => api.get<{ cats: Array<{ id: number; name: string; breed: string }> }>('/api/cats');
 export const getChannels = () => api.get<{ channels: Array<{ id: number; name: string }> }>('/api/channels');
+export const getChannelMessages = (channelId: number) => api.get<{ messages: Message[] }>(`/api/channels/${channelId}/messages`);
 export const getHealth = () => api.get<{ status: string; timestamp: string }>('/api/health');

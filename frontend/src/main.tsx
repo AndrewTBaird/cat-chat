@@ -30,6 +30,10 @@ const router = createBrowserRouter([
             element: <DashboardPage />,
           },
           {
+            path: 'channel/:channelId',
+            element: <DashboardPage />,
+          },
+          {
             path: 'profile',
             element: <ProfilePage />,
           },

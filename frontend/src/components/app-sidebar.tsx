@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Cat, Minus, Plus } from "lucide-react"
+import { Link } from "react-router-dom"
 import {
   Collapsible,
   CollapsibleContent,
@@ -71,9 +72,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       {channels.map((item) => (
                         <SidebarMenuSubItem key={item.id}>
                           <SidebarMenuSubButton asChild>
-                            <a href={`#channel-${item.id}`}>
+                            <Link to={`/dashboard/channel/${item.id}`}>
                               {item.name}
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
