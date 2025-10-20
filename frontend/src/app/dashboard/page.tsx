@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ChatInput } from '@/components/chat-input'
 import { useSocket } from '@/contexts/SocketContext'
@@ -19,9 +19,17 @@ const Page = () => {
   const { socket } = useSocket();
   const [messagesByChannel, setMessagesByChannel] = useState<Record<number, Message[]>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Default to channel 1 if no channelId in URL
   const currentChannelId = channelId ? parseInt(channelId) : 1;
+
+  // Scroll to bottom whenever messages change
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
 
   // Redirect to channel 1 if on /dashboard root
   useEffect(() => {
@@ -89,18 +97,25 @@ const Page = () => {
 
   const currentMessages = messagesByChannel[currentChannelId] || [];
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentMessages]);
+
   if (isLoading) {
     return (
-      <div className="flex flex-col flex-1 items-center justify-center">
+      <div className="flex flex-col h-full items-center justify-center">
         <p>Loading messages...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <ChatOutput messages={currentMessages} />
-      <div className='p-4'>
+    <div className="flex flex-col h-full">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <ChatOutput messages={currentMessages} />
+      </div>
+      <div className='p-4 border-t bg-background'>
         <ChatInput onSendMessage={handleSendMessage} />
       </div>
     </div>

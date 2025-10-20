@@ -3,9 +3,11 @@ import { TopNav } from '@/components/top-nav';
 
 export default function DashboardLayout() {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-screen overflow-hidden">
       <TopNav />
-      <Outlet />
+      <div className="flex-1 overflow-hidden">
+        <Outlet />
+      </div>
     </div>
   );
 }
