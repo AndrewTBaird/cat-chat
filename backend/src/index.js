@@ -181,6 +181,7 @@ app.get('/api/channels/:channelId/messages', authenticateToken, async (req, res)
         channelId: chatMessages.channelId,
         userId: chatMessages.userId,
         username: users.username,
+        avatarUrl: users.avatarUrl,
         createdAt: chatMessages.createdAt,
       })
       .from(chatMessages)

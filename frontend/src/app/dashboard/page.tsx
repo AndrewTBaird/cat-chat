@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ChatInput } from '@/components/chat-input'
 import { useSocket } from '@/contexts/SocketContext'
+import { useUser } from '@/hooks/useUser'
 import { ChatOutput } from '@/components/chat-output'
 import { getChannelMessages, type Message as ApiMessage } from '@/lib/api'
 
@@ -11,6 +12,13 @@ interface Message {
   text: string
   username: string
   channelId: number
+  userId: string
+  avatarUrl?: string | null
+}
+
+interface UserInfo {
+  username: string
+  avatarUrl?: string | null
 }
 
 const Page = () => {
@@ -18,6 +26,7 @@ const Page = () => {
   const navigate = useNavigate();
   const { socket } = useSocket();
   const [messagesByChannel, setMessagesByChannel] = useState<Record<number, Message[]>>({});
+  const [userCache, setUserCache] = useState<Record<string, UserInfo>>({});
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +61,22 @@ const Page = () => {
           text: msg.message,
           username: msg.username,
           channelId: msg.channelId,
+          userId: msg.userId,
+          avatarUrl: msg.avatarUrl,
         }));
+
+        // Build user cache from messages
+        const newUserCache: Record<string, UserInfo> = {};
+        response.messages.forEach((msg: ApiMessage) => {
+          if (!userCache[msg.userId]) {
+            newUserCache[msg.userId] = {
+              username: msg.username,
+              avatarUrl: msg.avatarUrl,
+            };
+          }
+        });
+
+        setUserCache((prev) => ({ ...prev, ...newUserCache }));
         setMessagesByChannel((prev) => ({
           ...prev,
           [currentChannelId]: formattedMessages,
@@ -75,11 +99,21 @@ const Page = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleMessage = (msg: { text: string; username: string; channelId: number }) => {
+    const handleMessage = (msg: { text: string; username: string; channelId: number; userId: string }) => {
       console.log('Received message:', msg);
+
+      // Get avatar from cache
+      const avatarUrl = userCache[msg.userId]?.avatarUrl;
+
       setMessagesByChannel((prev) => ({
         ...prev,
-        [msg.channelId]: [...(prev[msg.channelId] || []), { text: msg.text, username: msg.username, channelId: msg.channelId }],
+        [msg.channelId]: [...(prev[msg.channelId] || []), {
+          text: msg.text,
+          username: msg.username,
+          channelId: msg.channelId,
+          userId: msg.userId,
+          avatarUrl,
+        }],
       }));
     };
 

@@ -76,9 +76,10 @@ export interface RegisterRequest {
 }
 
 export interface User {
-  id: number;
+  id: string;
   username: string;
   email: string;
+  avatarUrl?: string | null;
   createdAt: string;
 }
 
@@ -98,6 +99,7 @@ export interface Message {
   channelId: number;
   userId: string;
   username: string;
+  avatarUrl?: string | null;
   createdAt: string;
 }
 
@@ -106,3 +108,4 @@ export const getCats = () => api.get<{ cats: Array<{ id: number; name: string; b
 export const getChannels = () => api.get<{ channels: Array<{ id: number; name: string }> }>('/api/channels');
 export const getChannelMessages = (channelId: number) => api.get<{ messages: Message[] }>(`/api/channels/${channelId}/messages`);
 export const getHealth = () => api.get<{ status: string; timestamp: string }>('/api/health');
+export const getCurrentUser = () => api.get<{ user: User }>('/api/users/profile');
