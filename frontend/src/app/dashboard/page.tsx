@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ChatInput } from '@/components/chat-input'
 import { useSocket } from '@/contexts/SocketContext'
-import { useUser } from '@/hooks/useUser'
 import { ChatOutput } from '@/components/chat-output'
 import { getChannelMessages, type Message as ApiMessage } from '@/lib/api'
 
