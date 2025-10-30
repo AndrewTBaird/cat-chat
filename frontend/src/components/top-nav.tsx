@@ -1,4 +1,4 @@
-import { UserCircle } from 'lucide-react'
+import { UserCircle, Menu } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
@@ -9,12 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useSidebar } from '@/components/ui/sidebar'
+import { Button } from '@/components/ui/button'
 import { getChannels } from '@/lib/api'
 
 export const TopNav = () => {
   const navigate = useNavigate();
   const { channelId } = useParams<{ channelId: string }>();
   const [channels, setChannels] = useState<Array<{ id: number; name: string }>>([])
+  const { setOpenMobile } = useSidebar()
 
   useEffect(() => {
     getChannels()
@@ -32,6 +35,14 @@ export const TopNav = () => {
   return (
     <div className="flex items-center justify-between border-b border-border px-4 py-1">
       <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setOpenMobile(true)}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
         <span className="font-semibold text-lg">{channelName}</span>
       </div>
       <DropdownMenu>

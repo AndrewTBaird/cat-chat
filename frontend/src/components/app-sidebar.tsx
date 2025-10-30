@@ -18,11 +18,13 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { getChannels } from "@/lib/api"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [channels, setChannels] = useState<Array<{ id: number; name: string }>>([])
+  const { setOpenMobile, isMobile } = useSidebar()
 
   useEffect(() => {
     getChannels()
@@ -33,6 +35,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         console.error('Failed to fetch channels:', error)
       })
   }, [])
+
+  const handleChannelClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -72,7 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       {channels.map((item) => (
                         <SidebarMenuSubItem key={item.id}>
                           <SidebarMenuSubButton asChild>
-                            <Link to={`/dashboard/channel/${item.id}`}>
+                            <Link to={`/dashboard/channel/${item.id}`} onClick={handleChannelClick}>
                               {item.name}
                             </Link>
                           </SidebarMenuSubButton>
