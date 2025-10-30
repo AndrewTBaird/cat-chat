@@ -1,8 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import App from './App.tsx'
-import HomePage from './app/page.tsx'
 import DashboardPage from './app/dashboard/page.tsx'
 import DashboardLayout from './app/dashboard/layout.tsx'
 import ProfilePage from './app/dashboard/profile/page.tsx'
@@ -19,7 +18,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <Navigate to="/dashboard/channel/1" replace />,
       },
       {
         path: 'dashboard',
