@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useSidebar } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { getChannels } from '@/lib/api'
+import { getChannels, logout } from '@/lib/api'
 
 export const TopNav = () => {
   const navigate = useNavigate();
@@ -31,6 +31,18 @@ export const TopNav = () => {
 
   const currentChannel = channels.find(channel => channel.id === parseInt(channelId || '1'))
   const channelName = currentChannel?.name || 'Loading...'
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      // Redirect to login page
+      navigate('/authenticate/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+      // Still redirect to login even if logout API fails
+      navigate('/authenticate/login')
+    }
+  }
 
   return (
     <div className="flex items-center justify-between border-b border-border px-4 py-1">
@@ -59,7 +71,7 @@ export const TopNav = () => {
           </DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
