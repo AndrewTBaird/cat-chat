@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -19,16 +18,10 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
-    // Only connect if we're on a dashboard route (not on login/register)
-    const isDashboardRoute = location.pathname.startsWith('/dashboard') || location.pathname === '/';
-
-    if (!isDashboardRoute) {
-      return;
-    }
-
+    // Socket provider is now only used in dashboard routes
+    // so we can connect immediately
     const socketInstance = io(BACKEND_URL, {
       withCredentials: true,
     });
@@ -63,7 +56,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       socketInstance.disconnect();
     };
-  }, [location.pathname]);
+  }, []);
 
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>
