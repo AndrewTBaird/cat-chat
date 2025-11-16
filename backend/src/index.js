@@ -61,6 +61,8 @@ io.use((socket, next) => {
 
   if (!decoded) {
     console.error('[WEBSOCKET AUTH] Token verification failed');
+    console.error('[WEBSOCKET AUTH] Token (first 20 chars):', token.substring(0, 20));
+    console.error('[WEBSOCKET AUTH] JWT_SECRET is set:', !!process.env.JWT_SECRET);
     return next(new Error('Invalid or expired token'));
   }
 
@@ -94,6 +96,7 @@ io.on('connection', async (socket) => {
   }
 
   socket.on('UserMessage', async (msg) => {
+    console.log(`[MESSAGE] Received from ${socket.user.username}:`, { text: msg.text?.substring(0, 50), channelId: msg.channelId });
     try {
       const { text, channelId } = msg;
 
@@ -113,6 +116,7 @@ io.on('connection', async (socket) => {
       };
 
       // Broadcast to channel room FIRST (streaming)
+      console.log(`[BROADCAST] Sending message to channel-${channelId}`);
       io.to(`channel-${channelId}`).emit('UserMessage', messageWithUser);
 
       // Save to database
@@ -122,6 +126,7 @@ io.on('connection', async (socket) => {
           channelId,
           message: text,
         });
+        console.log(`[DATABASE] Message saved successfully for user ${socket.user.username}`);
       } catch (dbError) {
         console.error(`[DATABASE ERROR] Failed to save message:`, dbError);
         socket.emit('MessageError', {
